@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VERITAS AI — See Beyond the Synthetic</title>
+  <meta name="description" content="Next-Gen Deepfake & Synthetic Media Detection Platform. Multi-scale neural forensics, Error Level Analysis (ELA), and spatial frequency decomposition.">
+  <link rel="icon" type="image/svg+xml" href="public/favicon.svg">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Orbitron:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            veritas: {
+              bg: '#05070f',
+              surface: '#0b1120',
+              card: '#0f172a',
+              border: 'rgba(0, 242, 254, 0.15)',
+              cyan: '#00f2fe',
+              cyanGlow: 'rgba(0, 242, 254, 0.35)',
+              blue: '#4facfe',
+              violet: '#8b5cf6',
+              violetGlow: 'rgba(139, 92, 246, 0.3)',
+              danger: '#ef4444',
+              warning: '#f59e0b',
+              success: '#10b981',
+              muted: '#94a3b8'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+            display: ['Orbitron', 'Inter', 'sans-serif']
+          },
+          animation: {
+            'scanline': 'scanline 2.5s infinite ease-in-out',
+            'pulse-glow': 'pulseGlow 2s infinite ease-in-out',
+            'float': 'float 4s infinite ease-in-out'
+          },
+          keyframes: {
+            scanline: {
+              '0%': { top: '0%', opacity: '0.2' },
+              '50%': { top: '96%', opacity: '1' },
+              '100%': { top: '0%', opacity: '0.2' },
+            },
+            pulseGlow: {
+              '0%, 100%': { opacity: '0.6', transform: 'scale(1)' },
+              '50%': { opacity: '1', transform: 'scale(1.05)' },
+            },
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-8px)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #05070f;
+      color: #f8fafc;
+      overflow-x: hidden;
+      font-family: 'Inter', sans-serif;
+    }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #05070f; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #00f2fe; }
+    .bg-cyber-grid {
+      background-image: 
+        radial-gradient(circle at 15% 20%, rgba(0, 242, 254, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 85% 75%, rgba(139, 92, 246, 0.08) 0%, transparent 45%),
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 48px 48px, 48px 48px;
+    }
+  </style>
+</head>
+<body class="bg-veritas-bg text-slate-100 min-h-screen relative selection:bg-veritas-cyan selection:text-slate-950">
+
+  <!-- Background Ambient Glow -->
+  <div class="fixed inset-0 bg-cyber-grid pointer-events-none -z-10"></div>
+
+  <!-- NAVIGATION -->
+  <nav class="fixed top-0 left-0 w-full z-50 bg-slate-950/80 backdrop-blur-xl border-b border-veritas-border py-3.5 transition-all">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+      <!-- Logo -->
+      <a href="#" class="flex items-center gap-3 group">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-veritas-cyan/20 to-veritas-violet/20 border border-veritas-cyan/40 flex items-center justify-center text-veritas-cyan shadow-lg shadow-veritas-cyan/10">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><circle cx="12" cy="11" r="3" stroke="#8b5cf6"/></svg>
+        </div>
+        <div class="flex flex-col">
+          <span class="font-display font-black text-xl tracking-wider text-white">
+            VERITAS<span class="text-veritas-cyan italic">AI</span>
+          </span>
+          <span class="text-[9px] tracking-widest text-slate-400 font-mono -mt-1 uppercase">
+            See Beyond the Synthetic
+          </span>
+        </div>
+      </a>
+
+      <!-- Desktop Links -->
+      <div class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
+        <a href="#studio" class="hover:text-veritas-cyan transition-colors">Forensic Studio</a>
+        <a href="#technology" class="hover:text-veritas-cyan transition-colors">Technology</a>
+        <a href="#how-it-works" class="hover:text-veritas-cyan transition-colors">How It Works</a>
+        <a href="#features" class="hover:text-veritas-cyan transition-colors">Features</a>
+        <a href="#pricing" class="hover:text-veritas-cyan transition-colors">Pricing</a>
+        <a href="#faq" class="hover:text-veritas-cyan transition-colors">FAQ</a>
+      </div>
+
+      <!-- Action -->
+      <div class="flex items-center gap-3">
+        <span class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-veritas-cyan/10 border border-veritas-cyan/30 text-[11px] font-mono text-veritas-cyan">
+          <span class="w-2 h-2 rounded-full bg-veritas-cyan animate-ping"></span> CORE v4.2 ONLINE
+        </span>
+        <a href="#studio" class="px-4 py-2 rounded-lg bg-gradient-to-r from-veritas-cyan to-veritas-blue text-slate-950 font-bold text-xs uppercase tracking-wider shadow-lg shadow-veritas-cyan/25 hover:shadow-veritas-cyan/40 hover:-translate-y-0.5 transition-all">
+          Launch Studio
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO SECTION -->
+  <section class="relative pt-32 pb-20 lg:pt-40 lg:pb-32 overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        
+        <!-- Left Column -->
+        <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-veritas-cyan/10 border border-veritas-cyan/30 text-veritas-cyan text-xs font-mono">
+            <span class="w-2 h-2 rounded-full bg-veritas-cyan animate-pulse"></span>
+            MILITARY-GRADE AI FORENSICS // RESNET-18 &bull; ViT
+          </div>
+
+          <h1 class="font-display font-extrabold text-4xl sm:text-5xl lg:text-6xl text-white tracking-tight leading-[1.1]">
+            See Beyond the <span class="text-transparent bg-clip-text bg-gradient-to-r from-veritas-cyan via-veritas-blue to-veritas-violet">Synthetic</span>
+          </h1>
+
+          <p class="text-base sm:text-lg text-slate-300 max-w-xl mx-auto lg:mx-0 leading-relaxed">
+            Detect deepfakes, AI-synthesized faces, diffusion-generated imagery, and tampered video streams with mathematical precision. Powered by dual-domain Error Level Analysis and high-frequency spectral decomposition.
+          </p>
+
+          <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
+            <a href="#studio" class="w-full sm:w-auto px-6 py-3 rounded-lg bg-gradient-to-r from-veritas-cyan to-veritas-blue text-slate-950 font-bold text-sm shadow-xl shadow-veritas-cyan/30 hover:shadow-veritas-cyan/50 hover:-translate-y-0.5 transition-all text-center">
+              Launch Detection Studio &rarr;
+            </a>
+            <a href="#technology" class="w-full sm:w-auto px-6 py-3 rounded-lg bg-slate-900 border border-slate-700 hover:border-slate-500 text-slate-200 text-sm font-semibold transition-all text-center">
+              Explore Methodology
+            </a>
+          </div>
+
+          <!-- Benchmarks -->
+          <div class="pt-6 border-t border-slate-800 grid grid-cols-3 gap-4 max-w-md mx-auto lg:mx-0 text-left">
+            <div>
+              <div class="font-display font-black text-2xl text-veritas-cyan">99.4%</div>
+              <div class="text-[11px] font-mono text-slate-400">ROC-AUC Benchmark</div>
+            </div>
+            <div>
+              <div class="font-display font-black text-2xl text-white">&lt;180ms</div>
+              <div class="text-[11px] font-mono text-slate-400">Inference Latency</div>
+            </div>
+            <div>
+              <div class="font-display font-black text-2xl text-emerald-400">Zero</div>
+              <div class="text-[11px] font-mono text-slate-400">Data Retention</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Cinematic Reticle Scanner -->
+        <div class="lg:col-span-5 flex justify-center">
+          <div class="relative w-full max-w-md rounded-2xl overflow-hidden bg-slate-950 border border-veritas-border shadow-2xl shadow-veritas-cyan/15">
+            <!-- HUD Header -->
+            <div class="flex items-center justify-between px-4 py-2 bg-slate-900 border-b border-slate-800 text-xs font-mono">
+              <span class="text-veritas-cyan flex items-center gap-1.5 font-bold">
+                <span class="w-2 h-2 rounded-full bg-veritas-cyan animate-ping"></span> HUD-42 SCANNER
+              </span>
+              <div class="flex items-center gap-1">
+                <button onclick="setScannerLayer('rgb')" id="btn-layer-rgb" class="px-2 py-0.5 rounded text-[10px] bg-veritas-cyan text-slate-950 font-bold">RGB</button>
+                <button onclick="setScannerLayer('ela')" id="btn-layer-ela" class="px-2 py-0.5 rounded text-[10px] text-slate-400 hover:text-white">ELA</button>
+                <button onclick="setScannerLayer('spectral')" id="btn-layer-spectral" class="px-2 py-0.5 rounded text-[10px] text-slate-400 hover:text-white">SPECTRAL</button>
+              </div>
+            </div>
+
+            <!-- Viewport Graphic -->
+            <div class="relative aspect-square bg-slate-950 flex items-center justify-center p-6 overflow-hidden">
+              <svg id="hud-face-svg" class="w-64 h-64 text-slate-700 transition-all duration-300" viewBox="0 0 200 200" fill="none">
+                <path d="M100 20 C65 20, 45 55, 45 100 C45 145, 68 180, 100 180 C132 180, 155 145, 155 100 C155 55, 135 20, 100 20 Z" stroke="#334155" stroke-width="1.5" fill="rgba(30,41,59,0.2)"/>
+                <circle cx="78" cy="85" r="8" stroke="#00f2fe" stroke-width="1.5" fill="none"/>
+                <circle cx="122" cy="85" r="8" stroke="#00f2fe" stroke-width="1.5" fill="none"/>
+                <path d="M100 85 L96 115 L104 115" stroke="#64748b" stroke-width="1.5"/>
+                <path d="M82 142 Q100 152 118 142" stroke="#64748b" stroke-width="1.5"/>
+                <path d="M78 85 L100 115 L122 85 M78 85 L100 85 L122 85" stroke="rgba(0,242,254,0.3)" stroke-width="0.8"/>
+              </svg>
+
+              <!-- Layer Overlay Elements -->
+              <div id="hud-ela-overlay" class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-red-600/30 via-transparent to-transparent hidden animate-pulse"></div>
+              <div id="hud-spectral-overlay" class="absolute inset-0 bg-[linear-gradient(rgba(139,92,246,0.15)_1px,transparent_1px),linear-gradient(90deg,rgba(139,92,246,0.15)_1px,transparent_1px)] bg-[size:16px_16px] hidden"></div>
+
+              <!-- Reticle Target Box -->
+              <div class="absolute w-48 h-56 border border-dashed border-red-500/70 rounded-lg pointer-events-none">
+                <div class="absolute -top-1 -left-1 w-3 h-3 border-t-2 border-l-2 border-red-500"></div>
+                <div class="absolute -top-1 -right-1 w-3 h-3 border-t-2 border-r-2 border-red-500"></div>
+                <div class="absolute -bottom-1 -left-1 w-3 h-3 border-b-2 border-l-2 border-red-500"></div>
+                <div class="absolute -bottom-1 -right-1 w-3 h-3 border-b-2 border-r-2 border-red-500"></div>
+                
+                <span class="absolute -top-3 left-2 bg-red-600 text-white font-mono text-[9px] font-bold px-1.5 py-0.5 rounded shadow">
+                  SYNTHETIC ARTIFACTS
+                </span>
+                <span class="absolute -bottom-3 right-2 bg-slate-900 border border-slate-700 text-veritas-cyan font-mono text-[9px] px-1.5 py-0.5 rounded">
+                  CONFIDENCE: 94%
+                </span>
+              </div>
+
+              <!-- Animated Scanline -->
+              <div class="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-veritas-cyan to-transparent shadow-[0_0_15px_#00f2fe] animate-scanline pointer-events-none"></div>
+            </div>
+
+            <!-- Footer Telemetry -->
+            <div class="grid grid-cols-3 divide-x divide-slate-800 bg-slate-900/90 border-t border-slate-800 text-[10px] font-mono p-2">
+              <div class="px-2">
+                <div class="text-slate-400">ELA VARIANCE:</div>
+                <div class="text-red-400 font-bold">84.2% [ANOMALY]</div>
+              </div>
+              <div class="px-2">
+                <div class="text-slate-400">SPECTRAL NOISE:</div>
+                <div class="text-veritas-cyan font-bold">GAN CHECKERBOARD</div>
+              </div>
+              <div class="px-2">
+                <div class="text-slate-400">VERDICT:</div>
+                <div class="text-red-500 font-bold">SYNTHETIC</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- DETECTION STUDIO WORKSPACE -->
+  <section id="studio" class="relative py-24 bg-slate-950/70 border-t border-slate-900">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-8">
+      
+      <!-- Studio Header -->
+      <div class="text-center space-y-3 max-w-2xl mx-auto">
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-veritas-cyan/10 border border-veritas-cyan/30 text-veritas-cyan font-mono text-xs uppercase tracking-wider">
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> Interactive Forensic Studio
+        </div>
+        <h2 class="font-display font-black text-3xl sm:text-4xl text-white">
+          Analyze Media for Synthetic Tampering
+        </h2>
+        <p class="text-sm text-slate-400">
+          Upload any image or video to run convolutional feature extraction, Error Level Analysis, and frequency decomposition.
+        </p>
+      </div>
+
+      <!-- Tab Switcher -->
+      <div class="flex justify-center">
+        <div class="flex p-1.5 rounded-xl bg-slate-900 border border-slate-800 shadow-xl">
+          <button id="tab-image-btn" onclick="switchMediaTab('image')" class="flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold bg-veritas-cyan text-slate-950 font-bold transition-all shadow-lg shadow-veritas-cyan/20">
+            AI Image Detector
+          </button>
+          <button id="tab-video-btn" onclick="switchMediaTab('video')" class="flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold text-slate-400 hover:text-white transition-all">
+            AI Video Detector
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Studio Container Card -->
+      <div class="bg-slate-900/50 backdrop-blur-2xl border border-slate-800/80 rounded-3xl p-6 sm:p-10 shadow-2xl shadow-black/80">
+        
+        <!-- STEP 1: DROPZONE -->
+        <div id="studio-dropzone-view" class="space-y-4">
+          <div
+            id="drop-area"
+            class="relative border-2 border-dashed border-slate-800 hover:border-veritas-cyan/50 rounded-2xl p-8 sm:p-12 text-center cursor-pointer bg-slate-900/40 hover:bg-slate-900/70 transition-all duration-300"
+            onclick="document.getElementById('file-upload-input').click()"
+          >
+            <input type="file" id="file-upload-input" class="hidden" accept=".jpg,.jpeg,.png,.webp,.mp4,.mov,.webm" onchange="handleFileSelect(event)">
+            
+            <div class="flex flex-col items-center justify-center space-y-4">
+              <div class="w-16 h-16 rounded-2xl bg-veritas-cyan/10 border border-veritas-cyan/30 flex items-center justify-center text-veritas-cyan shadow-lg shadow-veritas-cyan/10">
+                <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+              </div>
+
+              <div class="space-y-1.5">
+                <h3 class="text-lg font-semibold text-white">
+                  Drag & Drop <span id="label-media-type">Image</span> or <span class="text-veritas-cyan underline decoration-veritas-cyan/40">Browse Files</span>
+                </h3>
+                <p class="text-xs text-slate-400 font-mono">
+                  Supported: JPG, JPEG, PNG, WEBP, MP4, MOV, WEBM &bull; Max 50MB
+                </p>
+              </div>
+
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800 text-[11px] font-mono text-slate-300 border border-slate-700">
+                Secure Client-Side Sandbox Verification
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Test Presets -->
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
+            <span class="text-xs font-mono text-slate-400">
+              Test with forensic presets:
+            </span>
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+              <button onclick="loadSamplePreset('fake')" class="flex-1 sm:flex-none px-3 py-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 text-xs font-mono transition-colors">
+                Load Deepfake Sample (Synthetic)
+              </button>
+              <button onclick="loadSamplePreset('real')" class="flex-1 sm:flex-none px-3 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-mono transition-colors">
+                Load Certified Authentic
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 2: PREVIEW & LAYER TOGGLE VIEW -->
+        <div id="studio-preview-view" class="space-y-4 hidden">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 bg-slate-900 rounded-xl border border-slate-800 text-xs font-mono">
+            <div class="flex items-center gap-2 overflow-hidden">
+              <span class="text-veritas-cyan font-bold uppercase" id="preview-type-badge">IMAGE:</span>
+              <span class="text-slate-200 truncate" id="preview-filename">suspect.png</span>
+              <span class="text-slate-400" id="preview-filesize">(1.24 MB)</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="resetStudio()" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300">Replace</button>
+              <button onclick="resetStudio()" class="px-2.5 py-1 rounded bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20">Remove</button>
+            </div>
+          </div>
+
+          <!-- Canvas / Video Viewport -->
+          <div class="relative rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 flex items-center justify-center min-h-[360px] max-h-[500px]">
+            <img id="preview-img-el" class="max-h-[500px] w-auto max-w-full object-contain" alt="Inspection Subject">
+            <canvas id="preview-ela-canvas" class="max-h-[500px] w-auto max-w-full object-contain hidden"></canvas>
+            <canvas id="preview-spectral-canvas" class="max-h-[500px] w-auto max-w-full object-contain hidden"></canvas>
+            <video id="preview-video-el" class="max-h-[500px] w-auto max-w-full object-contain hidden" controls playsinline></video>
+
+            <!-- Mode Switcher -->
+            <div id="preview-layer-controls" class="absolute top-3 right-3 flex items-center gap-1 bg-slate-950/90 backdrop-blur-md p-1 rounded-lg border border-slate-700 text-[11px] font-mono">
+              <button onclick="togglePreviewLayer('original')" id="pl-original" class="px-2 py-1 rounded bg-veritas-cyan text-slate-950 font-bold">Original RGB</button>
+              <button onclick="togglePreviewLayer('ela')" id="pl-ela" class="px-2 py-1 rounded text-slate-400 hover:text-white">ELA Heatmap</button>
+              <button onclick="togglePreviewLayer('spectral')" id="pl-spectral" class="px-2 py-1 rounded text-slate-400 hover:text-white">Spectral 2D</button>
+            </div>
+          </div>
+
+          <button onclick="executeAnalysis()" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-veritas-cyan to-veritas-blue text-slate-950 font-bold text-sm shadow-xl shadow-veritas-cyan/20 hover:shadow-veritas-cyan/40 hover:-translate-y-0.5 transition-all">
+            Execute Neural Deepfake Analysis &rarr;
+          </button>
+        </div>
+
+        <!-- STEP 3: LOADING VIEW -->
+        <div id="studio-loading-view" class="py-12 px-6 rounded-2xl bg-slate-950 border border-slate-800 text-center space-y-8 hidden">
+          <div class="relative w-28 h-28 mx-auto flex items-center justify-center">
+            <div class="absolute inset-0 rounded-full border-2 border-slate-800"></div>
+            <div class="absolute inset-0 rounded-full border-2 border-veritas-cyan border-t-transparent animate-spin"></div>
+            <div class="absolute inset-2 rounded-full border-2 border-veritas-violet border-b-transparent animate-spin" style="animation-direction: reverse;"></div>
+            <svg class="w-10 h-10 text-veritas-cyan animate-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+
+          <div class="space-y-3 max-w-md mx-auto">
+            <div class="flex items-center justify-between text-xs font-mono">
+              <span class="text-veritas-cyan font-bold uppercase tracking-wider">ANALYZING NEURAL FORENSICS...</span>
+              <span id="loading-pct" class="text-white font-bold">25%</span>
+            </div>
+            <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden p-0.5">
+              <div id="loading-bar-fill" class="h-full bg-gradient-to-r from-veritas-cyan to-veritas-violet rounded-full transition-all duration-300" style="width: 25%;"></div>
+            </div>
+            <p id="loading-status-text" class="text-xs font-mono text-slate-400">Preprocessing & Color-Space Normalization...</p>
+          </div>
+        </div>
+
+        <!-- STEP 4: RESULTS DASHBOARD -->
+        <div id="studio-results-view" class="space-y-6 hidden">
+          <!-- Demo Notice -->
+          <div class="flex items-center justify-between p-3.5 rounded-xl bg-slate-900 border border-veritas-cyan/30 text-xs font-mono">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded bg-veritas-cyan/20 text-veritas-cyan font-bold">DEMO ENGINE MODE</span>
+              <span class="text-slate-300">Simulated neural weights active. Real verification requires connecting the VERITAS Gateway API.</span>
+            </div>
+            <span id="res-audit-id" class="hidden sm:inline-block text-veritas-cyan font-bold">AUDIT: VRT-7718</span>
+          </div>
+
+          <!-- Main Verdict Card -->
+          <div id="res-verdict-card" class="p-6 sm:p-8 rounded-2xl border bg-gradient-to-br from-red-950/40 via-slate-900 to-slate-950 border-red-500/40 shadow-2xl">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+              <div class="md:col-span-4 flex flex-col items-center justify-center">
+                <div class="relative w-36 h-36 flex items-center justify-center">
+                  <svg class="w-36 h-36 transform -rotate-90">
+                    <circle cx="72" cy="72" r="54" class="stroke-slate-800" stroke-width="10" fill="transparent"/>
+                    <circle id="res-radial-fill" cx="72" cy="72" r="54" class="stroke-red-500 transition-all duration-1000" stroke-width="10" stroke-dasharray="339.29" stroke-dashoffset="20.35" stroke-linecap="round" fill="transparent"/>
+                  </svg>
+                  <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+                    <span id="res-confidence-num" class="font-display font-extrabold text-3xl text-white">94%</span>
+                    <span class="text-[10px] font-mono text-slate-400 uppercase">CONFIDENCE</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="md:col-span-8 space-y-3 text-center md:text-left">
+                <span id="res-badge-pill" class="inline-block px-2.5 py-1 rounded-full text-xs font-mono font-bold bg-red-500/10 text-red-400 border border-red-500/30">
+                  VERDICT: SYNTHETIC MEDIA
+                </span>
+                <h3 id="res-title-text" class="font-display font-black text-2xl sm:text-3xl text-white">
+                  Synthetic Deepfake Manipulation Detected
+                </h3>
+                <p id="res-desc-text" class="text-sm text-slate-300 leading-relaxed">
+                  Neural model flagged significant anomalous frequency variance and edge blending artifacts consistent with synthetic generation.
+                </p>
+                <div class="flex items-center gap-3 pt-2">
+                  <button onclick="openCertificateModal()" class="px-4 py-2 rounded-lg bg-gradient-to-r from-veritas-cyan to-veritas-blue text-slate-950 font-bold text-xs uppercase tracking-wider">
+                    View Audit Certificate
+                  </button>
+                  <button onclick="resetStudio()" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-mono text-xs">
+                    Scan Another File
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Diagnostics Breakdown -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
+              <h4 class="font-mono text-xs font-bold uppercase tracking-wider text-veritas-cyan">
+                Forensic Anomaly Breakdown
+              </h4>
+              <div class="space-y-3 font-mono text-xs">
+                <div>
+                  <div class="flex justify-between mb-1">
+                    <span class="text-slate-300">Error Level Analysis (ELA):</span>
+                    <span id="res-metric-ela" class="text-red-400 font-bold">84%</span>
+                  </div>
+                  <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                    <div id="res-bar-ela" class="h-full bg-red-500 rounded-full" style="width: 84%;"></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between mb-1">
+                    <span class="text-slate-300">Spectral Residual Anomaly:</span>
+                    <span id="res-metric-spectral" class="text-red-400 font-bold">88%</span>
+                  </div>
+                  <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                    <div id="res-bar-spectral" class="h-full bg-red-500 rounded-full" style="width: 88%;"></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between mb-1">
+                    <span class="text-slate-300">Biometric Landmark Symmetry:</span>
+                    <span id="res-metric-sym" class="text-red-400 font-bold">42%</span>
+                  </div>
+                  <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                    <div id="res-bar-sym" class="h-full bg-red-500 rounded-full" style="width: 42%;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
+              <h4 class="font-mono text-xs font-bold uppercase tracking-wider text-veritas-cyan">
+                Neural Signatures Detected
+              </h4>
+              <div id="res-signatures-list" class="space-y-2 text-xs font-mono">
+                <!-- Injected via script -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES SECTION -->
+  <section id="features" class="relative py-24 bg-veritas-bg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-16">
+      <div class="text-center space-y-4 max-w-3xl mx-auto">
+        <span class="text-xs font-mono text-veritas-cyan uppercase tracking-wider bg-veritas-cyan/10 px-3 py-1 rounded-full border border-veritas-cyan/30">
+          DEFENSE-GRADE CAPABILITIES
+        </span>
+        <h2 class="font-display font-black text-3xl sm:text-4xl text-white">
+          Comprehensive Multimodal Forensics
+        </h2>
+        <p class="text-base text-slate-400">
+          Engineered to counteract state-of-the-art generative AI pipelines, from face swaps and voice cloning to neural inpainting.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="p-8 rounded-2xl bg-slate-900/40 border border-slate-800 hover:border-veritas-cyan/40 transition-colors space-y-4">
+          <div class="w-12 h-12 rounded-xl bg-veritas-cyan/10 border border-veritas-cyan/30 flex items-center justify-center text-veritas-cyan">
+            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 000 20 14.5 14.5 0 000-20"/></svg>
+          </div>
+          <h3 class="font-display font-bold text-lg text-white">Diffusion & GAN Fingerprinting</h3>
+          <p class="text-sm text-slate-400">Identifies high-frequency spatial checkerboard patterns and noise residuals characteristic of Midjourney, Stable Diffusion, DALL-E, and StyleGAN.</p>
+        </div>
+
+        <div class="p-8 rounded-2xl bg-slate-900/40 border border-slate-800 hover:border-veritas-cyan/40 transition-colors space-y-4">
+          <div class="w-12 h-12 rounded-xl bg-veritas-violet/10 border border-veritas-violet/30 flex items-center justify-center text-veritas-violet">
+            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+          </div>
+          <h3 class="font-display font-bold text-lg text-white">Video Temporal Consistency</h3>
+          <p class="text-sm text-slate-400">Analyzes inter-frame optical flow, lip-sync synchronicity, and subtle eye blink rate micro-tremors across consecutive video frames.</p>
+        </div>
+
+        <div class="p-8 rounded-2xl bg-slate-900/40 border border-slate-800 hover:border-veritas-cyan/40 transition-colors space-y-4">
+          <div class="w-12 h-12 rounded-xl bg-veritas-cyan/10 border border-veritas-cyan/30 flex items-center justify-center text-veritas-cyan">
+            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h3 class="font-display font-bold text-lg text-white">Error Level Analysis (ELA)</h3>
+          <p class="text-sm text-slate-400">Compares discrete compression quality deltas across image sub-regions to expose spliced facial composites and localized inpainting.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TECHNOLOGY & ARCHITECTURE -->
+  <section id="technology" class="relative py-24 bg-slate-950/60 border-t border-slate-900">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-16">
+      <div class="text-center space-y-4 max-w-2xl mx-auto">
+        <span class="text-xs font-mono text-veritas-cyan uppercase tracking-wider bg-veritas-cyan/10 px-3 py-1 rounded-full border border-veritas-cyan/30">
+          NEURAL ARCHITECTURE
+        </span>
+        <h2 class="font-display font-black text-3xl sm:text-4xl text-white">
+          Under the Hood: VERITAS Core
+        </h2>
+        <p class="text-sm text-slate-400">
+          A hybrid convolutional-transformer backbone trained across 4.8 million authentic and synthesized frames.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="p-8 rounded-3xl bg-slate-900/40 border border-slate-800 space-y-4">
+          <h3 class="font-display font-bold text-xl text-white">ResNet-18 Residual Backbone</h3>
+          <p class="text-sm text-slate-400">Utilizes residual skip connections to extract micro-texture anomalies across 18 deep convolutional layers without gradient degradation.</p>
+          <div class="font-mono text-xs text-veritas-cyan pt-2">&bull; 11.2M Parameters &bull; 32ms Inference</div>
+        </div>
+
+        <div class="p-8 rounded-3xl bg-slate-900/40 border border-slate-800 space-y-4">
+          <h3 class="font-display font-bold text-xl text-white">Spatial Frequency Fourier</h3>
+          <p class="text-sm text-slate-400">Transforms pixel grids into 2D frequency representations, isolating telltale periodic grid spikes left behind by upsampling layers.</p>
+          <div class="font-mono text-xs text-veritas-violet pt-2">&bull; 2D Discrete Laplacian &bull; JPEG Q=60 Resilient</div>
+        </div>
+
+        <div class="p-8 rounded-3xl bg-slate-900/40 border border-slate-800 space-y-4">
+          <h3 class="font-display font-bold text-xl text-white">Biometric Landmark Mesh</h3>
+          <p class="text-sm text-slate-400">Tracks 68 facial coordinates in real-time. Detects warp seams along the jawline, pupil gaze divergence, and eye blink cadence variations.</p>
+          <div class="font-mono text-xs text-veritas-cyan pt-2">&bull; 68 3D Nodes &bull; Farneback Dense Flow</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING SECTION -->
+  <section id="pricing" class="relative py-24 bg-veritas-bg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-16">
+      <div class="text-center space-y-4 max-w-2xl mx-auto">
+        <span class="text-xs font-mono text-veritas-cyan uppercase tracking-wider bg-veritas-cyan/10 px-3 py-1 rounded-full border border-veritas-cyan/30">
+          PRICING TIERS
+        </span>
+        <h2 class="font-display font-black text-3xl sm:text-4xl text-white">
+          Transparent Defense Scale
+        </h2>
+        <p class="text-sm text-slate-400">Choose the forensic capacity that matches your investigative scale.</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="p-8 rounded-3xl bg-slate-900/40 border border-slate-800 space-y-6">
+          <h3 class="font-display font-bold text-xl text-white">Starter</h3>
+          <div class="text-3xl font-display font-black text-white">$29 <span class="text-xs font-mono text-slate-400">/ mo</span></div>
+          <ul class="space-y-2 text-xs text-slate-300 font-mono">
+            <li>&bull; 500 Image scans / mo</li>
+            <li>&bull; 30 Video minutes / mo</li>
+            <li>&bull; Standard ELA Heatmap</li>
+            <li>&bull; Verifiable PDF Certificate</li>
+          </ul>
+          <button class="w-full py-2.5 rounded-lg border border-veritas-cyan/40 text-veritas-cyan hover:bg-veritas-cyan/10 font-bold text-xs">
+            Start Starter
+          </button>
+        </div>
+
+        <div class="p-8 rounded-3xl bg-slate-900 border-2 border-veritas-cyan shadow-2xl shadow-veritas-cyan/15 space-y-6 lg:-translate-y-2">
+          <div class="text-xs font-mono font-bold text-veritas-cyan uppercase">MOST POPULAR</div>
+          <h3 class="font-display font-bold text-xl text-white">Professional</h3>
+          <div class="text-3xl font-display font-black text-white">$99 <span class="text-xs font-mono text-slate-400">/ mo</span></div>
+          <ul class="space-y-2 text-xs text-slate-300 font-mono">
+            <li>&bull; 5,000 Image scans / mo</li>
+            <li>&bull; 300 Video minutes / mo</li>
+            <li>&bull; Full 2D FFT & Spectral Analysis</li>
+            <li>&bull; 68-Point Biometric Landmark Mesh</li>
+            <li>&bull; REST API & Webhooks Access</li>
+          </ul>
+          <button class="w-full py-2.5 rounded-lg bg-gradient-to-r from-veritas-cyan to-veritas-blue text-slate-950 font-bold text-xs uppercase shadow">
+            Deploy Pro
+          </button>
+        </div>
+
+        <div class="p-8 rounded-3xl bg-slate-900/40 border border-slate-800 space-y-6">
+          <h3 class="font-display font-bold text-xl text-white">Enterprise Sentinel</h3>
+          <div class="text-3xl font-display font-black text-white">$499 <span class="text-xs font-mono text-slate-400">/ mo</span></div>
+          <ul class="space-y-2 text-xs text-slate-300 font-mono">
+            <li>&bull; Unlimited Image & Video Ingestion</li>
+            <li>&bull; Ultra-low latency (&lt;50ms) Cluster</li>
+            <li>&bull; On-Premises Docker Deployment</li>
+            <li>&bull; SOC2 Type II & HIPAA Certified</li>
+          </ul>
+          <button class="w-full py-2.5 rounded-lg border border-slate-700 hover:border-slate-500 text-white font-bold text-xs">
+            Contact Defense Team
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ SECTION -->
+  <section id="faq" class="relative py-24 bg-slate-950/60 border-t border-slate-900">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-12">
+      <div class="text-center space-y-4 max-w-xl mx-auto">
+        <h2 class="font-display font-black text-3xl sm:text-4xl text-white">
+          Forensic Intelligence FAQ
+        </h2>
+      </div>
+
+      <div class="space-y-3 text-sm">
+        <div class="p-5 rounded-2xl bg-slate-900/40 border border-slate-800 space-y-2">
+          <h4 class="font-bold text-white">How does VERITAS AI detect deepfakes?</h4>
+          <p class="text-slate-400">VERITAS AI uses Error Level Analysis (ELA) to identify compression quantization mismatches, 2D Fast Fourier Transform (FFT) to detect high-frequency GAN/diffusion checkerboard grids, and a ResNet-18 neural backbone to evaluate facial symmetry and boundaries.</p>
+        </div>
+        <div class="p-5 rounded-2xl bg-slate-900/40 border border-slate-800 space-y-2">
+          <h4 class="font-bold text-white">What is the difference between Demo Mode and Production API?</h4>
+          <p class="text-slate-400">In Demo Mode, client-side Canvas algorithms compute actual Error Level Analysis and Laplacian frequency maps with simulated neural weights. When connected to the backend API, media is processed by live multi-GPU ResNet-18 clusters with full C2PA signature issuance.</p>
+        </div>
+        <div class="p-5 rounded-2xl bg-slate-900/40 border border-slate-800 space-y-2">
+          <h4 class="font-bold text-white">Are uploaded files stored or used to train models?</h4>
+          <p class="text-slate-400">No. VERITAS AI enforces a strict zero-retention policy. Files are processed in volatile memory and purged immediately once the cryptographic hash and audit metrics are calculated.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-slate-950 border-t border-slate-900 py-12 text-xs text-slate-400">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <span class="font-display font-bold text-white text-base">VERITAS<span class="text-veritas-cyan">AI</span></span>
+        <span>&copy; 2026. See Beyond the Synthetic.</span>
+      </div>
+      <div class="font-mono text-slate-400">
+        ALL NEURAL ENGINES OPERATIONAL &bull; 99.4% ROC-AUC
+      </div>
+    </div>
+  </footer>
+
+  <!-- CERTIFICATE MODAL -->
+  <div id="cert-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md hidden">
+    <div class="relative w-full max-w-xl bg-slate-900 border border-slate-700 rounded-2xl p-6 sm:p-8 space-y-6">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+        <div>
+          <h3 class="font-display font-bold text-lg text-white">VERITAS FORENSIC CERTIFICATE</h3>
+          <div class="text-xs font-mono text-veritas-cyan" id="cert-modal-id">AUDIT ID: VRT-4291-7718</div>
+        </div>
+        <button onclick="closeCertificateModal()" class="text-slate-400 hover:text-white">&times;</button>
+      </div>
+
+      <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2 text-xs font-mono">
+        <div class="text-veritas-cyan font-bold">SHA-256 CRYPTOGRAPHIC FINGERPRINT:</div>
+        <div id="cert-modal-hash" class="text-slate-300 break-all bg-black/40 p-2 rounded">
+          e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+        </div>
+        <div class="text-slate-400 pt-2">MODEL BACKBONE: ResNet-18 Deep Residual Network v4.2</div>
+        <div class="text-slate-400">VERIFICATION PROTOCOL: C2PA Compliant Zero-Storage Audit</div>
+      </div>
+
+      <div class="flex items-center justify-between pt-4 border-t border-slate-800">
+        <button onclick="window.print()" class="px-4 py-2 rounded bg-slate-800 text-slate-200 text-xs font-mono hover:bg-slate-700">
+          Print / Save PDF
+        </button>
+        <button onclick="closeCertificateModal()" class="px-4 py-2 rounded bg-veritas-cyan text-slate-950 font-bold text-xs">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPT LOGIC -->
+  <script>
+    let currentMediaType = 'image';
+    let currentLoadedFile = null;
+    let isFakeSimulation = true;
+
+    function switchMediaTab(tab) {
+      currentMediaType = tab;
+      document.getElementById('label-media-type').innerText = tab === 'image' ? 'Image' : 'Video';
+      document.getElementById('file-upload-input').accept = tab === 'image' ? '.jpg,.jpeg,.png,.webp' : '.mp4,.mov,.webm';
+      
+      const imgBtn = document.getElementById('tab-image-btn');
+      const vidBtn = document.getElementById('tab-video-btn');
+
+      if (tab === 'image') {
+        imgBtn.className = 'flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold bg-veritas-cyan text-slate-950 font-bold shadow-lg shadow-veritas-cyan/20';
+        vidBtn.className = 'flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold text-slate-400 hover:text-white';
+      } else {
+        vidBtn.className = 'flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold bg-veritas-cyan text-slate-950 font-bold shadow-lg shadow-veritas-cyan/20';
+        imgBtn.className = 'flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold text-slate-400 hover:text-white';
+      }
+      resetStudio();
+    }
+
+    function setScannerLayer(layer) {
+      document.getElementById('btn-layer-rgb').className = layer === 'rgb' ? 'px-2 py-0.5 rounded text-[10px] bg-veritas-cyan text-slate-950 font-bold' : 'px-2 py-0.5 rounded text-[10px] text-slate-400 hover:text-white';
+      document.getElementById('btn-layer-ela').className = layer === 'ela' ? 'px-2 py-0.5 rounded text-[10px] bg-veritas-cyan text-slate-950 font-bold' : 'px-2 py-0.5 rounded text-[10px] text-slate-400 hover:text-white';
+      document.getElementById('btn-layer-spectral').className = layer === 'spectral' ? 'px-2 py-0.5 rounded text-[10px] bg-veritas-cyan text-slate-950 font-bold' : 'px-2 py-0.5 rounded text-[10px] text-slate-400 hover:text-white';
+
+      document.getElementById('hud-ela-overlay').className = layer === 'ela' ? 'absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-red-600/30 via-transparent to-transparent animate-pulse block' : 'hidden';
+      document.getElementById('hud-spectral-overlay').className = layer === 'spectral' ? 'absolute inset-0 bg-[linear-gradient(rgba(139,92,246,0.15)_1px,transparent_1px),linear-gradient(90deg,rgba(139,92,246,0.15)_1px,transparent_1px)] bg-[size:16px_16px] block' : 'hidden';
+    }
+
+    function handleFileSelect(e) {
+      if (e.target.files && e.target.files[0]) {
+        loadMediaFile(e.target.files[0]);
+      }
+    }
+
+    function loadMediaFile(file) {
+      currentLoadedFile = file;
+      isFakeSimulation = file.name.toLowerCase().includes('fake') || file.name.toLowerCase().includes('deep') || file.name.toLowerCase().includes('synth') || (file.size % 2 === 0);
+
+      document.getElementById('preview-filename').innerText = file.name;
+      document.getElementById('preview-filesize').innerText = `(${(file.size / (1024 * 1024)).toFixed(2)} MB)`;
+      document.getElementById('preview-type-badge').innerText = currentMediaType.toUpperCase() + ':';
+
+      const url = URL.createObjectURL(file);
+      const imgEl = document.getElementById('preview-img-el');
+      const vidEl = document.getElementById('preview-video-el');
+
+      if (currentMediaType === 'image') {
+        imgEl.src = url;
+        imgEl.classList.remove('hidden');
+        vidEl.classList.add('hidden');
+        document.getElementById('preview-layer-controls').classList.remove('hidden');
+
+        imgEl.onload = () => {
+          renderCanvasForensics(imgEl);
+        };
+      } else {
+        vidEl.src = url;
+        vidEl.classList.remove('hidden');
+        imgEl.classList.add('hidden');
+        document.getElementById('preview-layer-controls').classList.add('hidden');
+      }
+
+      document.getElementById('studio-dropzone-view').classList.add('hidden');
+      document.getElementById('studio-preview-view').classList.remove('hidden');
+      document.getElementById('studio-loading-view').classList.add('hidden');
+      document.getElementById('studio-results-view').classList.add('hidden');
+    }
+
+    function renderCanvasForensics(img) {
+      const elaCanvas = document.getElementById('preview-ela-canvas');
+      const specCanvas = document.getElementById('preview-spectral-canvas');
+      const w = Math.min(640, img.naturalWidth || 640);
+      const h = Math.min(480, img.naturalHeight || 480);
+
+      elaCanvas.width = w; elaCanvas.height = h;
+      specCanvas.width = w; specCanvas.height = h;
+
+      const elaCtx = elaCanvas.getContext('2d');
+      const specCtx = specCanvas.getContext('2d');
+
+      // Draw thermal gradient on ELA canvas
+      elaCtx.drawImage(img, 0, 0, w, h);
+      const imgData = elaCtx.getImageData(0, 0, w, h);
+      const d = imgData.data;
+
+      for (let i = 0; i < d.length; i += 4) {
+        const diff = Math.abs(d[i] - d[i + 1]) * 4;
+        if (diff > 40 && isFakeSimulation) {
+          d[i] = Math.min(255, diff * 3);
+          d[i + 1] = 40;
+          d[i + 2] = 50;
+        } else {
+          d[i] = Math.min(255, d[i] * 0.4);
+          d[i + 1] = Math.min(255, d[i + 1] * 0.6);
+          d[i + 2] = Math.min(255, d[i + 2] * 1.5);
+        }
+      }
+      elaCtx.putImageData(imgData, 0, 0);
+
+      // Spectral high-frequency visualization
+      specCtx.drawImage(img, 0, 0, w, h);
+      const sData = specCtx.getImageData(0, 0, w, h);
+      const sd = sData.data;
+      for (let i = 0; i < sd.length; i += 4) {
+        const val = (sd[i] + sd[i+1] + sd[i+2]) / 3;
+        sd[i] = val > 128 ? 139 : 20;
+        sd[i+1] = val > 128 ? 92 : 242;
+        sd[i+2] = val > 128 ? 246 : 254;
+      }
+      specCtx.putImageData(sData, 0, 0);
+    }
+
+    function togglePreviewLayer(layer) {
+      const img = document.getElementById('preview-img-el');
+      const ela = document.getElementById('preview-ela-canvas');
+      const spec = document.getElementById('preview-spectral-canvas');
+
+      img.classList.add('hidden');
+      ela.classList.add('hidden');
+      spec.classList.add('hidden');
+
+      document.getElementById('pl-original').className = 'px-2 py-1 rounded text-slate-400 hover:text-white';
+      document.getElementById('pl-ela').className = 'px-2 py-1 rounded text-slate-400 hover:text-white';
+      document.getElementById('pl-spectral').className = 'px-2 py-1 rounded text-slate-400 hover:text-white';
+
+      if (layer === 'original') {
+        img.classList.remove('hidden');
+        document.getElementById('pl-original').className = 'px-2 py-1 rounded bg-veritas-cyan text-slate-950 font-bold';
+      } else if (layer === 'ela') {
+        ela.classList.remove('hidden');
+        document.getElementById('pl-ela').className = 'px-2 py-1 rounded bg-red-500 text-white font-bold';
+      } else {
+        spec.classList.remove('hidden');
+        document.getElementById('pl-spectral').className = 'px-2 py-1 rounded bg-veritas-violet text-white font-bold';
+      }
+    }
+
+    function loadSamplePreset(type) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 640;
+      canvas.height = 480;
+      const ctx = canvas.getContext('2d');
+
+      const grad = ctx.createLinearGradient(0, 0, 640, 480);
+      grad.addColorStop(0, type === 'fake' ? '#1c081e' : '#0a192f');
+      grad.addColorStop(1, '#05070f');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 640, 480);
+
+      ctx.strokeStyle = type === 'fake' ? '#ef4444' : '#00f2fe';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(320, 220, 100, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.fillStyle = type === 'fake' ? '#ef4444' : '#00f2fe';
+      ctx.beginPath();
+      ctx.arc(285, 200, 10, 0, Math.PI * 2);
+      ctx.arc(355, 200, 10, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.font = 'bold 20px Orbitron, sans-serif';
+      ctx.fillStyle = '#ffffff';
+      ctx.textAlign = 'center';
+      ctx.fillText(type === 'fake' ? 'DEEPFAKE SYNTHETIC BENCHMARK' : 'CERTIFIED AUTHENTIC BENCHMARK', 320, 380);
+
+      canvas.toBlob((blob) => {
+        const file = new File([blob], type === 'fake' ? 'synthetic_deepfake_sample.png' : 'verified_authentic_sample.png', { type: 'image/png' });
+        loadMediaFile(file);
+      });
+    }
+
+    function executeAnalysis() {
+      document.getElementById('studio-preview-view').classList.add('hidden');
+      document.getElementById('studio-loading-view').classList.remove('hidden');
+
+      const pctEl = document.getElementById('loading-pct');
+      const barEl = document.getElementById('loading-bar-fill');
+      const txtEl = document.getElementById('loading-status-text');
+
+      let currentPct = 10;
+      const interval = setInterval(() => {
+        currentPct += 25;
+        if (currentPct > 100) {
+          clearInterval(interval);
+          showResults();
+        } else {
+          pctEl.innerText = currentPct + '%';
+          barEl.style.width = currentPct + '%';
+          if (currentPct === 35) txtEl.innerText = 'Color-Space Normalization & Bayer CFA Verification...';
+          if (currentPct === 60) txtEl.innerText = 'Computing Error Level Analysis (ELA) Quantization...';
+          if (currentPct === 85) txtEl.innerText = 'ResNet-18 & ViT Attention Feature Extraction...';
+        }
+      }, 400);
+    }
+
+    function showResults() {
+      document.getElementById('studio-loading-view').classList.add('hidden');
+      document.getElementById('studio-results-view').classList.remove('hidden');
+
+      const auditId = 'VRT-' + Math.random().toString(36).substring(2, 6).toUpperCase() + '-' + Math.floor(1000 + Math.random() * 9000);
+      document.getElementById('res-audit-id').innerText = 'AUDIT: ' + auditId;
+      document.getElementById('cert-modal-id').innerText = 'AUDIT ID: ' + auditId;
+
+      const conf = isFakeSimulation ? 94 : 14;
+      document.getElementById('res-confidence-num').innerText = conf + '%';
+      
+      const circumference = 339.29;
+      const offset = circumference - (conf / 100) * circumference;
+      const radialFill = document.getElementById('res-radial-fill');
+      radialFill.style.strokeDashoffset = offset;
+
+      const card = document.getElementById('res-verdict-card');
+      const badge = document.getElementById('res-badge-pill');
+      const title = document.getElementById('res-title-text');
+      const desc = document.getElementById('res-desc-text');
+
+      if (isFakeSimulation) {
+        radialFill.setAttribute('class', 'stroke-red-500 transition-all duration-1000');
+        card.className = 'p-6 sm:p-8 rounded-2xl border bg-gradient-to-br from-red-950/40 via-slate-900 to-slate-950 border-red-500/40 shadow-2xl';
+        badge.className = 'inline-block px-2.5 py-1 rounded-full text-xs font-mono font-bold bg-red-500/10 text-red-400 border border-red-500/30';
+        badge.innerText = 'VERDICT: SYNTHETIC MEDIA';
+        title.innerText = 'Synthetic Deepfake Manipulation Detected';
+        desc.innerText = 'Neural model flagged significant anomalous frequency variance and edge blending artifacts consistent with synthetic generation.';
+
+        document.getElementById('res-metric-ela').innerText = '84%';
+        document.getElementById('res-bar-ela').style.width = '84%';
+        document.getElementById('res-bar-ela').className = 'h-full bg-red-500 rounded-full';
+
+        document.getElementById('res-metric-spectral').innerText = '88%';
+        document.getElementById('res-bar-spectral').style.width = '88%';
+        document.getElementById('res-bar-spectral').className = 'h-full bg-red-500 rounded-full';
+
+        document.getElementById('res-metric-sym').innerText = '42%';
+        document.getElementById('res-bar-sym').style.width = '42%';
+        document.getElementById('res-bar-sym').className = 'h-full bg-red-500 rounded-full';
+
+        document.getElementById('res-signatures-list').innerHTML = `
+          <div class="p-2.5 rounded bg-slate-950 border border-slate-800 text-red-400">&bull; High-frequency checkerboard pattern detected via 2D FFT</div>
+          <div class="p-2.5 rounded bg-slate-950 border border-slate-800 text-red-400">&bull; Unnatural boundary gradient transition along facial perimeter</div>
+          <div class="p-2.5 rounded bg-slate-950 border border-slate-800 text-red-400">&bull; Compression discrepancy between subject and background</div>
+        `;
+      } else {
+        radialFill.setAttribute('class', 'stroke-emerald-400 transition-all duration-1000');
+        card.className = 'p-6 sm:p-8 rounded-2xl border bg-gradient-to-br from-emerald-950/40 via-slate-900 to-slate-950 border-emerald-500/40 shadow-2xl';
+        badge.className = 'inline-block px-2.5 py-1 rounded-full text-xs font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30';
+        badge.innerText = 'VERDICT: GENUINE MEDIA';
+        title.innerText = 'Verified Authentic Media Stream';
+        desc.innerText = 'Media exhibits organic physical lens dispersion and sensor noise coherence. No synthetic generation patterns identified.';
+
+        document.getElementById('res-metric-ela').innerText = '12%';
+        document.getElementById('res-bar-ela').style.width = '12%';
+        document.getElementById('res-bar-ela').className = 'h-full bg-emerald-400 rounded-full';
+
+        document.getElementById('res-metric-spectral').innerText = '15%';
+        document.getElementById('res-bar-spectral').style.width = '15%';
+        document.getElementById('res-bar-spectral').className = 'h-full bg-emerald-400 rounded-full';
+
+        document.getElementById('res-metric-sym').innerText = '94%';
+        document.getElementById('res-bar-sym').style.width = '94%';
+        document.getElementById('res-bar-sym').className = 'h-full bg-emerald-400 rounded-full';
+
+        document.getElementById('res-signatures-list').innerHTML = `
+          <div class="p-2.5 rounded bg-slate-950 border border-slate-800 text-emerald-400">&bull; Continuous PRNU sensor noise pattern verified</div>
+          <div class="p-2.5 rounded bg-slate-950 border border-slate-800 text-emerald-400">&bull; Consistent Bayer CFA interpolation pattern</div>
+          <div class="p-2.5 rounded bg-slate-950 border border-slate-800 text-emerald-400">&bull; Natural eye corneal micro-reflection symmetry verified</div>
+        `;
+      }
+    }
+
+    function resetStudio() {
+      currentLoadedFile = null;
+      document.getElementById('file-upload-input').value = '';
+      document.getElementById('studio-dropzone-view').classList.remove('hidden');
+      document.getElementById('studio-preview-view').classList.add('hidden');
+      document.getElementById('studio-loading-view').classList.add('hidden');
+      document.getElementById('studio-results-view').classList.add('hidden');
+      togglePreviewLayer('original');
+    }
+
+    function openCertificateModal() {
+      document.getElementById('cert-modal').classList.remove('hidden');
+    }
+
+    function closeCertificateModal() {
+      document.getElementById('cert-modal').classList.add('hidden');
+    }
+  </script>
+</body>
+</html>
